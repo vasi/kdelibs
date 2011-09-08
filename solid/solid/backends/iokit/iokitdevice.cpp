@@ -20,6 +20,7 @@
 
 
 #include "iokitdevice.h"
+#include "iokitprivate.h"
 #include "iokitgenericinterface.h"
 #include "iokitprocessor.h"
 #include "iokitbattery.h"
@@ -34,9 +35,6 @@
 #include <IOKit/network/IOEthernetInterface.h>
 
 #include <CoreFoundation/CoreFoundation.h>
-
-// from cfhelper.cpp
-extern QMap<QString, QVariant> q_toVariantMap(const CFMutableDictionaryRef &dict);
 
 namespace Solid { namespace Backends { namespace IOKit {
 

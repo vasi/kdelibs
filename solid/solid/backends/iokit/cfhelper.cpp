@@ -18,6 +18,8 @@
     License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "iokitprivate.h"
+
 #include <QtCore/qvarlengtharray.h>
 #include <QtCore/qstring.h>
 #include <QtCore/qstringlist.h>
@@ -26,6 +28,8 @@
 #include <QtCore/qdebug.h>
 
 #include <CoreFoundation/CoreFoundation.h>
+
+namespace Solid { namespace Backends { namespace IOKit {
 
 /* helper classes to convert from CF types to Qt */
 
@@ -169,3 +173,4 @@ QMap<QString, QVariant> q_toVariantMap (const CFMutableDictionaryRef &dict)
     return result;
 }
 
+} } } // namespace
