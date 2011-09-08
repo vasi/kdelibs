@@ -20,12 +20,12 @@
 
 #include "iokitmanager.h"
 #include "iokitdevice.h"
+#include "iokitprivate.h"
 
 #include <QtCore/qdebug.h>
 
 #include <IOKit/IOKitLib.h>
 #include <IOKit/usb/IOUSBLib.h>
-#include <IOKit/network/IOEthernetInterface.h>
 
 #include <CoreFoundation/CoreFoundation.h>
 
@@ -41,7 +41,6 @@ public:
     IONotificationPortRef port;
     CFRunLoopSourceRef source;
 
-    static const char *typeToName(Solid::DeviceInterface::Type type);
     static QStringList devicesFromRegistry(io_iterator_t it);
 
     QSet<Solid::DeviceInterface::Type> supportedInterfaces;
@@ -70,41 +69,6 @@ QStringList IOKitManagerPrivate::devicesFromRegistry(io_iterator_t it)
     IOObjectRelease(it);
 
     return result;
-}
-
-const char *IOKitManagerPrivate::typeToName(Solid::DeviceInterface::Type type)
-{
-    switch (type) {
-    case Solid::DeviceInterface::Unknown:
-        return 0;
-    case Solid::DeviceInterface::NetworkInterface:
-        return kIOEthernetInterfaceClass;
-    case Solid::DeviceInterface::Processor:
-        return "AppleACPICPU";
-    case Solid::DeviceInterface::SerialInterface:
-        return "IOSerialBSDClient";
-    case Solid::DeviceInterface::Battery:
-        return "AppleSmartBattery";
-    case Solid::DeviceInterface::StorageVolume:
-        return "IOMedia";
-
-    //Solid::DeviceInterface::GenericInterface:
-    //Solid::DeviceInterface::Block:
-    //Solid::DeviceInterface::StorageAccess:
-    //Solid::DeviceInterface::StorageDrive:
-    //Solid::DeviceInterface::OpticalDrive:
-    //Solid::DeviceInterface::OpticalDisc:
-    //Solid::DeviceInterface::Camera:
-    //Solid::DeviceInterface::PortableMediaPlayer:
-    //Solid::DeviceInterface::NetworkInterface:
-    //Solid::DeviceInterface::AcAdapter:
-    //Solid::DeviceInterface::Button:
-    //Solid::DeviceInterface::AudioInterface:
-    //Solid::DeviceInterface::DvbInterface:
-    //Solid::DeviceInterface::Video:
-    }
-
-    return 0;
 }
 
 IOKitManager::IOKitManager(QObject *parent)
@@ -192,7 +156,7 @@ QStringList IOKitManager::devicesFromQuery(const QString &parentUdi,
         // match all device interfaces
         result = allDevices();
     } else {
-        const char *deviceClassName = IOKitManagerPrivate::typeToName(type);
+        const char *deviceClassName = interfaceToIOClass(type);
         if (!deviceClassName)
             return QStringList();
 

@@ -20,6 +20,44 @@
 
 #include "iokitprivate.h"
 
+#include <IOKit/IOKitLib.h>
+#include <IOKit/network/IOEthernetInterface.h>
+
 namespace Solid { namespace Backends { namespace IOKit {
+
+const char *interfaceToIOClass(Solid::DeviceInterface::Type type)
+{
+    switch (type) {
+    case Solid::DeviceInterface::Unknown:
+        return 0;
+    case Solid::DeviceInterface::NetworkInterface:
+        return kIOEthernetInterfaceClass;
+    case Solid::DeviceInterface::Processor:
+        return "AppleACPICPU";
+    case Solid::DeviceInterface::SerialInterface:
+        return "IOSerialBSDClient";
+    case Solid::DeviceInterface::Battery:
+        return "AppleSmartBattery";
+    case Solid::DeviceInterface::StorageVolume:
+        return "IOMedia";
+
+    //Solid::DeviceInterface::GenericInterface:
+    //Solid::DeviceInterface::Block:
+    //Solid::DeviceInterface::StorageAccess:
+    //Solid::DeviceInterface::StorageDrive:
+    //Solid::DeviceInterface::OpticalDrive:
+    //Solid::DeviceInterface::OpticalDisc:
+    //Solid::DeviceInterface::Camera:
+    //Solid::DeviceInterface::PortableMediaPlayer:
+    //Solid::DeviceInterface::NetworkInterface:
+    //Solid::DeviceInterface::AcAdapter:
+    //Solid::DeviceInterface::Button:
+    //Solid::DeviceInterface::AudioInterface:
+    //Solid::DeviceInterface::DvbInterface:
+    //Solid::DeviceInterface::Video:
+    }
+
+    return 0;
+}
 
 } } } // namespace

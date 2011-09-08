@@ -38,24 +38,6 @@
 
 namespace Solid { namespace Backends { namespace IOKit {
 
-// returns a solid type from an entry and its properties
-static Solid::DeviceInterface::Type typeFromEntry(const io_registry_entry_t &entry,
-        const QMap<QString, QVariant> &properties)
-{
-    if (IOObjectConformsTo(entry, kIOEthernetInterfaceClass))
-        return Solid::DeviceInterface::NetworkInterface;
-    if (IOObjectConformsTo(entry, "AppleACPICPU"))
-        return Solid::DeviceInterface::Processor;
-    if (IOObjectConformsTo(entry, "IOSerialBSDClient"))
-        return Solid::DeviceInterface::SerialInterface;
-    if (IOObjectConformsTo(entry, "AppleSmartBattery"))
-        return Solid::DeviceInterface::Battery;
-    if (IOObjectConformsTo(entry, "IOMedia"))
-        return Solid::DeviceInterface::StorageVolume;
-
-    return Solid::DeviceInterface::Unknown;
-}
-
 // gets all properties from an entry into a QMap
 static QMap<QString, QVariant> getProperties(const io_registry_entry_t &entry)
 {
@@ -95,11 +77,12 @@ static QString getParentDeviceUdi(const io_registry_entry_t &entry)
 }
 
 
+const char *const PropertyClassName = "className";
+
 class IOKitDevicePrivate
 {
 public:
     inline IOKitDevicePrivate()
-        : type(Solid::DeviceInterface::Unknown)
     {}
 
     void init(const QString &udiString, const io_registry_entry_t & entry);
@@ -107,7 +90,6 @@ public:
     QString udi;
     QString parentUdi;
     QMap<QString, QVariant> properties;
-    Solid::DeviceInterface::Type type;
 };
 
 void IOKitDevicePrivate::init(const QString &udiString, const io_registry_entry_t &entry)
@@ -120,10 +102,9 @@ void IOKitDevicePrivate::init(const QString &udiString, const io_registry_entry_
 
     io_name_t className;
     IOObjectGetClass(entry, className);
-    properties["className"] = QString::fromUtf8(className);
+    properties[PropertyClassName] = QString::fromUtf8(className);
 
     parentUdi = getParentDeviceUdi(entry);
-    type = typeFromEntry(entry, properties);
 
     IOObjectRelease(entry);
 }
@@ -206,44 +187,64 @@ bool IOKitDevice::propertyExists(const QString &key) const
 
 bool IOKitDevice::queryDeviceInterface(const Solid::DeviceInterface::Type &type) const
 {
-    return (type == Solid::DeviceInterface::GenericInterface
-            || type == d->type);
+    if (type == Solid::DeviceInterface::GenericInterface)
+        return true;
+
+    const char *targetStr = interfaceToIOClass(type);
+    if (!targetStr)
+        return false;
+
+
+    // Walk the IOKit class hierarchy
+    bool result = false;
+    CFStringRef target = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault,
+        targetStr, kCFStringEncodingASCII, kCFAllocatorNull);
+
+    QString qCurrent = property(PropertyClassName).toString();
+    CFStringRef current = CFStringCreateWithCharacters(kCFAllocatorDefault,
+        reinterpret_cast<const UniChar*>(qCurrent.unicode()),
+        qCurrent.length());
+
+    while (current) {
+        if (CFStringCompare(target, current, 0) == kCFCompareEqualTo) {
+            result = true;
+            break;
+        }
+        CFStringRef next = IOObjectCopySuperclassForClass(current);
+        CFRelease(current);
+        current = next;
+    }
+
+    if (current)
+        CFRelease(current);
+    CFRelease(target);
+
+    return result;
 }
 
 QObject *IOKitDevice::createDeviceInterface(const Solid::DeviceInterface::Type &type)
 {
-    QObject *iface = 0;
+    if (!queryDeviceInterface(type))
+        return 0;
 
     switch (type)
     {
     case Solid::DeviceInterface::GenericInterface:
-        iface = new GenericInterface(this);
-        break;
+        return new GenericInterface(this);
     case Solid::DeviceInterface::Processor:
-        if (d->type == Solid::DeviceInterface::Processor)
-            iface = new Processor(this);
-        break;
+        return new Processor(this);
     case Solid::DeviceInterface::NetworkInterface:
-        if (d->type == Solid::DeviceInterface::NetworkInterface)
-            iface = new NetworkInterface(this);
-        break;
+        return new NetworkInterface(this);
     case Solid::DeviceInterface::SerialInterface:
-        if (d->type == Solid::DeviceInterface::SerialInterface)
-            iface = new SerialInterface(this);
-        break;
+        return new SerialInterface(this);
     case Solid::DeviceInterface::Battery:
-        if (d->type == Solid::DeviceInterface::Battery)
-            iface = new Battery(this);
-        break;
+        return new Battery(this);
     case Solid::DeviceInterface::StorageVolume:
-        if (d->type == Solid::DeviceInterface::StorageVolume)
-            iface = new Volume(this);
-        break;
+        return new Volume(this);
     // the rest is TODO
     }
 
-
-    return iface;
+    return 0;
 }
 
 

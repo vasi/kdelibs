@@ -29,6 +29,9 @@ namespace Solid { namespace Backends { namespace IOKit {
 
 QMap<QString, QVariant> q_toVariantMap(const CFMutableDictionaryRef &dict);
 
+// Which IOKit class provides the given DeviceInterface?
+const char *interfaceToIOClass(Solid::DeviceInterface::Type type);
+
 } } } // namespace
 
 #endif // SOLID_BACKENDS_IOKIT_PRIVATE_H
