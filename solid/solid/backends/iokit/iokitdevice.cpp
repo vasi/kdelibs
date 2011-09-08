@@ -27,6 +27,7 @@
 #include "iokitnetworkinterface.h"
 #include "iokitserialinterface.h"
 #include "iokitvolume.h"
+#include "iokitblock.h"
 
 #include <QtCore/qdebug.h>
 
@@ -241,6 +242,8 @@ QObject *IOKitDevice::createDeviceInterface(const Solid::DeviceInterface::Type &
         return new Battery(this);
     case Solid::DeviceInterface::StorageVolume:
         return new Volume(this);
+    case Solid::DeviceInterface::Block:
+        return new Block(this);
     // the rest is TODO
     }
 

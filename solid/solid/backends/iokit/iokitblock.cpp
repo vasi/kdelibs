@@ -18,56 +18,36 @@
     License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "iokitvolume.h"
+#include "iokitblock.h"
 #include "iokitdevice.h"
 
 #include <QtCore/qdebug.h>
 
 using namespace Solid::Backends::IOKit;
 
-Volume::Volume(IOKitDevice *device)
-    : Block(device)
+Block::Block(IOKitDevice *device)
+    : DeviceInterface(device)
 {
 }
 
-Volume::~Volume()
+Block::~Block()
 {
 
 }
 
-QString Volume::encryptedContainerUdi() const
-{
-    return QString(); // FIXME
-}
-
-qulonglong Volume::size() const
-{
-    return qulonglong(0); // FIXME
-}
-
-QString Volume::uuid() const
+QString Block::device() const
 {
     return QString(); // FIXME
 }
 
-QString Volume::label() const
+int Block::deviceMajor() const
 {
-    return QString(); // FIXME
+    return 0; // FIXME
 }
 
-QString Volume::fsType() const
+int Block::deviceMinor() const
 {
-    return QString(); // FIXME
+    return 0; // FIXME
 }
 
-Solid::StorageVolume::UsageType Volume::usage() const
-{
-    return Solid::StorageVolume::Other; // FIXME
-}
-
-bool Volume::isIgnored() const
-{
-    return false; // FIXME
-}
-
-#include "backends/iokit/iokitvolume.moc"
+#include "backends/iokit/iokitblock.moc"

@@ -22,7 +22,7 @@
 #define SOLID_BACKENDS_IOKIT_VOLUME_H
 
 #include <solid/ifaces/storagevolume.h>
-#include "iokitdeviceinterface.h"
+#include "iokitblock.h"
 
 namespace Solid
 {
@@ -32,7 +32,7 @@ namespace IOKit
 {
 class IOKitDevice;
 
-class Volume : public DeviceInterface, virtual public Solid::Ifaces::StorageVolume
+class Volume : public Block, virtual public Solid::Ifaces::StorageVolume
 {
     Q_OBJECT
     Q_INTERFACES(Solid::Ifaces::StorageVolume)
@@ -41,10 +41,6 @@ public:
     Volume(IOKitDevice *device);
     virtual ~Volume();
 
-    virtual QString device() const;
-    virtual int deviceMinor() const;
-    virtual int deviceMajor() const;
-    
     virtual QString encryptedContainerUdi() const;
     virtual qulonglong size() const;
     virtual QString uuid() const;

@@ -40,9 +40,10 @@ const char *interfaceToIOClass(Solid::DeviceInterface::Type type)
         return "AppleSmartBattery";
     case Solid::DeviceInterface::StorageVolume:
         return "IOMedia";
+    case Solid::DeviceInterface::Block:
+        return "IOMedia";
 
     //Solid::DeviceInterface::GenericInterface:
-    //Solid::DeviceInterface::Block:
     //Solid::DeviceInterface::StorageAccess:
     //Solid::DeviceInterface::StorageDrive:
     //Solid::DeviceInterface::OpticalDrive:

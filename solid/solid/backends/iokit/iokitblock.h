@@ -18,56 +18,35 @@
     License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "iokitvolume.h"
-#include "iokitdevice.h"
+#ifndef SOLID_BACKENDS_IOKIT_BLOCK_H
+#define SOLID_BACKENDS_IOKIT_BLOCK_H
 
-#include <QtCore/qdebug.h>
+#include <solid/ifaces/block.h>
+#include "iokitdeviceinterface.h"
 
-using namespace Solid::Backends::IOKit;
-
-Volume::Volume(IOKitDevice *device)
-    : Block(device)
+namespace Solid
 {
+namespace Backends
+{
+namespace IOKit
+{
+class IOKitDevice;
+
+class Block : public DeviceInterface, virtual public Solid::Ifaces::Block
+{
+    Q_OBJECT
+    Q_INTERFACES(Solid::Ifaces::Block)
+
+public:
+    Block(IOKitDevice *device);
+    virtual ~Block();
+
+    virtual QString device() const;
+    virtual int deviceMinor() const;
+    virtual int deviceMajor() const;
+};
+}
+}
 }
 
-Volume::~Volume()
-{
-
-}
-
-QString Volume::encryptedContainerUdi() const
-{
-    return QString(); // FIXME
-}
-
-qulonglong Volume::size() const
-{
-    return qulonglong(0); // FIXME
-}
-
-QString Volume::uuid() const
-{
-    return QString(); // FIXME
-}
-
-QString Volume::label() const
-{
-    return QString(); // FIXME
-}
-
-QString Volume::fsType() const
-{
-    return QString(); // FIXME
-}
-
-Solid::StorageVolume::UsageType Volume::usage() const
-{
-    return Solid::StorageVolume::Other; // FIXME
-}
-
-bool Volume::isIgnored() const
-{
-    return false; // FIXME
-}
-
-#include "backends/iokit/iokitvolume.moc"
+#endif // SOLID_BACKENDS_IOKIT_BLOCK_H
