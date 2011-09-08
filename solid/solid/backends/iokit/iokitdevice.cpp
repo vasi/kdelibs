@@ -25,6 +25,7 @@
 #include "iokitbattery.h"
 #include "iokitnetworkinterface.h"
 #include "iokitserialinterface.h"
+#include "iokitvolume.h"
 
 #include <QtCore/qdebug.h>
 
@@ -51,6 +52,8 @@ static Solid::DeviceInterface::Type typeFromEntry(const io_registry_entry_t &ent
         return Solid::DeviceInterface::SerialInterface;
     if (IOObjectConformsTo(entry, "AppleSmartBattery"))
         return Solid::DeviceInterface::Battery;
+    if (IOObjectConformsTo(entry, "IOMedia"))
+        return Solid::DeviceInterface::StorageVolume;
 
     return Solid::DeviceInterface::Unknown;
 }
@@ -233,6 +236,10 @@ QObject *IOKitDevice::createDeviceInterface(const Solid::DeviceInterface::Type &
     case Solid::DeviceInterface::Battery:
         if (d->type == Solid::DeviceInterface::Battery)
             iface = new Battery(this);
+        break;
+    case Solid::DeviceInterface::StorageVolume:
+        if (d->type == Solid::DeviceInterface::StorageVolume)
+            iface = new Volume(this);
         break;
     // the rest is TODO
     }

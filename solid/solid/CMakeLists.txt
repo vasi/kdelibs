@@ -279,6 +279,7 @@ if(APPLE)
    backends/iokit/iokitnetworkinterface.cpp
    backends/iokit/iokitserialinterface.cpp
    backends/iokit/iokitbattery.cpp
+   backends/iokit/iokitvolume.cpp
    )
 endif(APPLE)
 

@@ -85,13 +85,14 @@ const char *IOKitManagerPrivate::typeToName(Solid::DeviceInterface::Type type)
         return "IOSerialBSDClient";
     case Solid::DeviceInterface::Battery:
         return "AppleSmartBattery";
+    case Solid::DeviceInterface::StorageVolume:
+        return "IOMedia";
 
     //Solid::DeviceInterface::GenericInterface:
     //Solid::DeviceInterface::Block:
     //Solid::DeviceInterface::StorageAccess:
     //Solid::DeviceInterface::StorageDrive:
     //Solid::DeviceInterface::OpticalDrive:
-    //Solid::DeviceInterface::StorageVolume:
     //Solid::DeviceInterface::OpticalDisc:
     //Solid::DeviceInterface::Camera:
     //Solid::DeviceInterface::PortableMediaPlayer:
