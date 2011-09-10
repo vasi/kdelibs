@@ -24,6 +24,7 @@
 #include <QtCore/qdebug.h>
 
 #include <IOKit/storage/IOMedia.h>
+#include <DiskArbitration/DADisk.h>
 
 using namespace Solid::Backends::IOKit;
 
@@ -54,12 +55,12 @@ QString Volume::uuid() const
 
 QString Volume::label() const
 {
-    return QString(); // FIXME
+    return diskProp(kDADiskDescriptionVolumeNameKey).toString();
 }
 
 QString Volume::fsType() const
 {
-    return QString(); // FIXME
+    return diskProp(kDADiskDescriptionVolumeKindKey).toString();
 }
 
 Solid::StorageVolume::UsageType Volume::usage() const
