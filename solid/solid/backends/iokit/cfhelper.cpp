@@ -147,6 +147,11 @@ QVariant q_toVariant(const CFTypeRef &obj)
         return map;
     }
 
+    if (typeId == CFURLGetTypeID()) {
+        // CFURL doesn't round-trip well with QUrl, so store as a string
+        return q_toVariant(CFURLGetString(static_cast<const CFURLRef>(obj)));
+    }
+
     return QVariant();
 }
 
