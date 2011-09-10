@@ -120,10 +120,7 @@ IOKitDevice::IOKitDevice(const QString &udi, const io_registry_entry_t &entry)
 IOKitDevice::IOKitDevice(const QString &udi)
     : d(new IOKitDevicePrivate)
 {
-    io_registry_entry_t entry = IORegistryEntryFromPath(
-            kIOMasterPortDefault,
-            udi.toLocal8Bit().constData());
-
+    io_registry_entry_t entry = findIORegistryEntrySafe(udi);
     if (entry == MACH_PORT_NULL) {
         qDebug() << Q_FUNC_INFO << "Tried to create Device from invalid UDI" << udi;
         return;

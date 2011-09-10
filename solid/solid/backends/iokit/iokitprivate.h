@@ -24,6 +24,7 @@
 #include <QtCore/qvariant.h>
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <IOKit/IOKitLib.h>
 
 namespace Solid { namespace Backends { namespace IOKit {
 
@@ -32,6 +33,9 @@ QMap<QString, QVariant> q_toVariantMap(const CFMutableDictionaryRef &dict);
 
 // Which IOKit class provides the given DeviceInterface?
 const char *interfaceToIOClass(Solid::DeviceInterface::Type type);
+
+// Work around IORegistryEntryFromPath bug
+io_registry_entry_t findIORegistryEntrySafe(const QString& udi);
 
 } } } // namespace
 

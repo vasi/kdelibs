@@ -192,14 +192,7 @@ QStringList IOKitManager::devicesFromQuery(const QString &parentUdi,
 
 QObject *IOKitManager::createDevice(const QString &udi)
 {
-    io_registry_entry_t entry = IORegistryEntryFromPath(
-            kIOMasterPortDefault,
-            udi.toLocal8Bit().constData());
-
-    // we have to do IOObjectConformsTo - comparing the class names is not good enough
-    //if (IOObjectConformsTo(entry, kIOEthernetInterfaceClass)) {
-    //}
-
+    io_registry_entry_t entry = findIORegistryEntrySafe(udi);
     if (entry == MACH_PORT_NULL)
         return 0;
 
