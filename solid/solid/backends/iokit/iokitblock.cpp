@@ -23,6 +23,8 @@
 
 #include <QtCore/qdebug.h>
 
+#include <IOKit/IOBSD.h>
+
 using namespace Solid::Backends::IOKit;
 
 Block::Block(IOKitDevice *device)
@@ -37,17 +39,17 @@ Block::~Block()
 
 QString Block::device() const
 {
-    return QString(); // FIXME
+    return QString("/dev/") + m_device->property(kIOBSDNameKey).toString();
 }
 
 int Block::deviceMajor() const
 {
-    return 0; // FIXME
+    return m_device->property(kIOBSDMajorKey).toInt();
 }
 
 int Block::deviceMinor() const
 {
-    return 0; // FIXME
+    return m_device->property(kIOBSDMinorKey).toInt();
 }
 
 #include "backends/iokit/iokitblock.moc"

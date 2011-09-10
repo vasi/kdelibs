@@ -23,6 +23,8 @@
 
 #include <QtCore/qdebug.h>
 
+#include <IOKit/storage/IOMedia.h>
+
 using namespace Solid::Backends::IOKit;
 
 Volume::Volume(IOKitDevice *device)
@@ -42,12 +44,12 @@ QString Volume::encryptedContainerUdi() const
 
 qulonglong Volume::size() const
 {
-    return qulonglong(0); // FIXME
+    return m_device->property(kIOMediaSizeKey).toULongLong();
 }
 
 QString Volume::uuid() const
 {
-    return QString(); // FIXME
+    return m_device->property(kIOMediaUUIDKey).toString();
 }
 
 QString Volume::label() const
