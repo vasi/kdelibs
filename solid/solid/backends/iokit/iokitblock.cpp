@@ -20,21 +20,25 @@
 
 #include "iokitblock.h"
 #include "iokitdevice.h"
+#include "iokitprivate.h"
 
 #include <QtCore/qdebug.h>
 
 #include <IOKit/IOBSD.h>
+#include <DiskArbitration/DiskArbitration.h>
 
 using namespace Solid::Backends::IOKit;
 
 Block::Block(IOKitDevice *device)
-    : DeviceInterface(device)
+    : DeviceInterface(device), m_diskDescription(0)
 {
 }
 
 Block::~Block()
 {
-
+    if (m_diskDescription) {
+        CFRelease(m_diskDescription);
+    }
 }
 
 QString Block::device() const
@@ -50,6 +54,34 @@ int Block::deviceMajor() const
 int Block::deviceMinor() const
 {
     return m_device->property(kIOBSDMinorKey).toInt();
+}
+
+QVariant Block::diskProp(const CFStringRef key) const
+{
+    // Cache the properties
+    if (!m_diskDescription) {
+        // FIXME: Should we use a global session?
+        DASessionRef session = DASessionCreate(kCFAllocatorDefault);
+        if (session) {
+            QByteArray name = m_device->property(kIOBSDNameKey).toByteArray();
+            DADiskRef disk = DADiskCreateFromBSDName(kCFAllocatorDefault,
+                session, name.constData());
+            if (disk) {
+                const_cast<Block*>(this)->m_diskDescription =
+                    DADiskCopyDescription(disk);
+                CFRelease(disk);
+            }
+            CFRelease(session);
+        }
+    }
+
+    if (m_diskDescription) {
+        CFTypeRef result = CFDictionaryGetValue(m_diskDescription, key);
+        if (result) {
+            return q_toVariant(result);
+        }
+    }
+    return QVariant();
 }
 
 #include "backends/iokit/iokitblock.moc"

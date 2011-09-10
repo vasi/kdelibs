@@ -44,6 +44,13 @@ public:
     virtual QString device() const;
     virtual int deviceMinor() const;
     virtual int deviceMajor() const;
+
+protected:
+    // Get a DiskArbitration property
+    QVariant diskProp(const CFStringRef key) const;
+
+private:
+    CFDictionaryRef m_diskDescription;
 };
 }
 }

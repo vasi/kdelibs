@@ -27,6 +27,7 @@
 
 namespace Solid { namespace Backends { namespace IOKit {
 
+QVariant q_toVariant(const CFTypeRef &obj);
 QMap<QString, QVariant> q_toVariantMap(const CFMutableDictionaryRef &dict);
 
 // Which IOKit class provides the given DeviceInterface?

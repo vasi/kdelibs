@@ -51,7 +51,7 @@ static inline T convertCFNumber(const CFNumberRef &num, CFNumberType type)
     return n;
 }
 
-static QVariant q_toVariant(const CFTypeRef &obj)
+QVariant q_toVariant(const CFTypeRef &obj)
 {
     const CFTypeID typeId = CFGetTypeID(obj);
 
