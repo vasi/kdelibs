@@ -42,9 +42,10 @@ const char *interfaceToIOClass(Solid::DeviceInterface::Type type)
         return "IOMedia";
     case Solid::DeviceInterface::Block:
         return "IOMedia";
+    case Solid::DeviceInterface::StorageAccess:
+        return "IOMedia";
 
     //Solid::DeviceInterface::GenericInterface:
-    //Solid::DeviceInterface::StorageAccess:
     //Solid::DeviceInterface::StorageDrive:
     //Solid::DeviceInterface::OpticalDrive:
     //Solid::DeviceInterface::OpticalDisc:

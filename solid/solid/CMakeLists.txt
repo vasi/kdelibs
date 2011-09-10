@@ -282,6 +282,7 @@ if(APPLE)
    backends/iokit/iokitbattery.cpp
    backends/iokit/iokitvolume.cpp
    backends/iokit/iokitblock.cpp
+   backends/iokit/iokitstorageaccess.cpp
    )
 endif(APPLE)
 

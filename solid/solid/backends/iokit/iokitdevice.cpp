@@ -28,6 +28,7 @@
 #include "iokitserialinterface.h"
 #include "iokitvolume.h"
 #include "iokitblock.h"
+#include "iokitstorageaccess.h"
 
 #include <QtCore/qdebug.h>
 
@@ -244,6 +245,8 @@ QObject *IOKitDevice::createDeviceInterface(const Solid::DeviceInterface::Type &
         return new Volume(this);
     case Solid::DeviceInterface::Block:
         return new Block(this);
+    case Solid::DeviceInterface::StorageAccess:
+        return new StorageAccess(this);
     // the rest is TODO
     }
 
