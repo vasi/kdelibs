@@ -23,6 +23,11 @@
 
 #include <QtCore/qdebug.h>
 
+#include <sys/param.h> // for MAXPATHLEN
+
+#include <CoreFoundation/CoreFoundation.h>
+#include <DiskArbitration/DADisk.h>
+
 using namespace Solid::Backends::IOKit;
 
 // TODO: emit signals
@@ -39,17 +44,37 @@ StorageAccess::~StorageAccess()
 
 bool StorageAccess::isAccessible() const
 {
-    return false; // TODO
+    return !diskProp(kDADiskDescriptionVolumePathKey).isNull();
 }
 
 QString StorageAccess::filePath() const
 {
-    return QString(); // TODO
+    QString urlStr = diskProp(kDADiskDescriptionVolumePathKey).toString();
+
+    if (!urlStr.isEmpty()) {
+        // Don't try to figure out ourselves what local path this URL-string
+        // represents. Ask CFURL instead.
+        QByteArray urlBytes = urlStr.toUtf8();
+        CFURLRef url = CFURLCreateWithBytes(kCFAllocatorDefault,
+            reinterpret_cast<const UInt8*>(urlBytes.constData()),
+            urlBytes.size(), kCFStringEncodingUTF8, NULL);
+        if (url) {
+            UInt8 buf[MAXPATHLEN];
+            bool ok = CFURLGetFileSystemRepresentation(url, false, buf,
+                sizeof(buf));
+            if (ok) {
+                return QString::fromUtf8(reinterpret_cast<char*>(buf));
+            }
+            CFRelease(url);
+        }
+    }
+
+    return QString();
 }
 
 bool StorageAccess::isIgnored() const
 {
-    return true; // TODO
+    return false; // TODO
 }
 
 bool StorageAccess::setup()
