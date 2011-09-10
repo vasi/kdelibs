@@ -159,7 +159,19 @@ QString IOKitDevice::product() const
 
 QString IOKitDevice::icon() const
 {
-    return QString(); // TODO
+    if (queryDeviceInterface(Solid::DeviceInterface::Processor)) {
+        return QLatin1String("cpu");
+    } else if (queryDeviceInterface(Solid::DeviceInterface::NetworkInterface)) {
+        return QLatin1String("network-wired"); // TODO: wireless?
+    } else if (queryDeviceInterface(Solid::DeviceInterface::SerialInterface)) {
+        return QLatin1String("modem");
+    } else if (queryDeviceInterface(Solid::DeviceInterface::Battery)) {
+        return QLatin1String("battery");
+    } else if (queryDeviceInterface(Solid::DeviceInterface::StorageVolume)) {
+        // TODO: removable, optical
+        return QLatin1String("drive-harddisk");
+    }
+    return QString();
 }
 
 QStringList IOKitDevice::emblems() const
