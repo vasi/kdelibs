@@ -21,6 +21,8 @@
 #ifndef SOLID_BACKENDS_IOKIT_PRIVATE_H
 #define SOLID_BACKENDS_IOKIT_PRIVATE_H
 
+#include <solid/ifaces/device.h>
+
 #include <QtCore/qvariant.h>
 
 #include <CoreFoundation/CoreFoundation.h>
