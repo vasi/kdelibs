@@ -40,7 +40,7 @@ Volume::~Volume()
 
 QString Volume::encryptedContainerUdi() const
 {
-    return QString(); // FIXME
+    return QString(); // TODO
 }
 
 qulonglong Volume::size() const
@@ -65,12 +65,28 @@ QString Volume::fsType() const
 
 Solid::StorageVolume::UsageType Volume::usage() const
 {
-    return Solid::StorageVolume::Other; // FIXME
+    if (diskProp(kDADiskDescriptionVolumeMountableKey).toBool()) {
+        return Solid::StorageVolume::FileSystem;
+    } else if (m_device->property(kIOMediaWholeKey).toBool()
+            && !m_device->property(kIOMediaLeafKey).toBool()) {
+        // Reasonable assumption that if it uses a whole device, and has
+        // sub-devices, it's a part-table.
+        // TODO: Actually check if it's a part table somehow?
+        return Solid::StorageVolume::PartitionTable;
+    } else {
+        // Unused volumes aren't reported at all
+        // TODO: Distinguish RAID, Encrypted.
+        //   - Check against list of known partition types?
+        //   - Scan IORegistry for children?
+        return Solid::StorageVolume::Other;
+    }
 }
 
 bool Volume::isIgnored() const
 {
-    return false; // FIXME
+    // TODO: Check against list of known types? If it's mounted, check
+    // statfs for MNT_DONTBROWSE?
+    return false;
 }
 
 #include "backends/iokit/iokitvolume.moc"

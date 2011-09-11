@@ -33,6 +33,9 @@
 #include <QtCore/qdebug.h>
 
 #include <IOKit/IOKitLib.h>
+#include <IOKit/storage/IOCDMedia.h>
+#include <IOKit/storage/IODVDMedia.h>
+#include <IOKit/storage/IOBDMedia.h>
 #include <IOKit/usb/IOUSBLib.h>
 #include <IOKit/network/IOEthernetInterface.h>
 
@@ -165,8 +168,17 @@ QString IOKitDevice::icon() const
     } else if (queryDeviceInterface(Solid::DeviceInterface::Battery)) {
         return QLatin1String("battery");
     } else if (queryDeviceInterface(Solid::DeviceInterface::StorageVolume)) {
-        // TODO: removable, optical
-        return QLatin1String("drive-harddisk");
+        QString ioClass = property(PropertyClassName).toString();
+        if (ioClass == kIOCDMediaClass) {
+            return QLatin1String("media-optical");
+        } else if (ioClass == kIODVDMediaClass) {
+            return QLatin1String("media-optical-dvd");
+        } else if (ioClass == kIOBDMediaClass) {
+            return QLatin1String("media-optical-blu-ray");
+        } else {
+            // TODO: removable?
+            return QLatin1String("drive-harddisk");
+        }
     }
     return QString();
 }

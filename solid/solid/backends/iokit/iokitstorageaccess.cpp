@@ -74,7 +74,7 @@ QString StorageAccess::filePath() const
 
 bool StorageAccess::isIgnored() const
 {
-    return false; // TODO
+    return false; // TODO: Check statfs() for MNT_DONTBROWSE?
 }
 
 bool StorageAccess::setup()
